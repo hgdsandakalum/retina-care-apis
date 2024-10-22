@@ -1,0 +1,78 @@
+services:
+  data-collection:
+    build:
+      context: ./data-collection-service
+      dockerfile: Dockerfile
+    ports:
+      - "5000:3000"  # Host:5000 -> Container:3000
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - ./data-collection-service:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./data-collection-service/uploads:/usr/src/app/uploads
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  data-preprocess:
+    build:
+      context: ./data-preprocess-service
+      dockerfile: Dockerfile
+    ports:
+      - "5005:3000"  # Host:5005 -> Container:3000
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - PYTHON_PATH=/usr/src/app
+    volumes:
+      - ./data-preprocess-service:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./data-preprocess-service/uploads:/usr/src/app/uploads
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  prediction:
+    build:
+      context: ./prediction-service
+      dockerfile: Dockerfile
+    ports:
+      - "5002:3000"  # Host:5002 -> Container:3000
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - PYTHON_PATH=/usr/src/app
+    volumes:
+      - ./prediction-service:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./prediction-service/uploads:/usr/src/app/uploads
+      - ./prediction-service/models:/usr/src/app/models
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  user:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "5001:3000"  # Host:5001 -> Container:3000
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - ./user-service:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./user-service/uploads:/usr/src/app/uploads
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  uploads:
