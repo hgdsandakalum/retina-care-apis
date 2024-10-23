@@ -26,6 +26,9 @@ const PatientSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    address: {
+      type: String,
+    },
     conditions: {
       type: String,
       required: true,

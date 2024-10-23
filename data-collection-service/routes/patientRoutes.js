@@ -5,14 +5,23 @@ const Patient = require("../models/Patient");
 // Create a new patient
 router.post("/", async (req, res) => {
   try {
-    const { firstName, lastName, gender, email, age, mobile, conditions } =
-      req.body;
+    const {
+      firstName,
+      lastName,
+      gender,
+      email,
+      age,
+      address,
+      mobile,
+      conditions,
+    } = req.body;
     const newPatient = new Patient({
       firstName,
       lastName,
       gender,
       email,
       age,
+      address,
       mobile,
       conditions,
     });
@@ -49,10 +58,10 @@ router.get("/:id", async (req, res) => {
 // Update a patient
 router.put("/:id", async (req, res) => {
   try {
-    const { firstName, lastName, gender, age, conditions } = req.body;
+    const { firstName, lastName, gender, age, address, conditions } = req.body;
     const updatedPatient = await Patient.findOneAndUpdate(
       { patientId: req.params.id },
-      { firstName, lastName, gender, age, conditions },
+      { firstName, lastName, gender, age, address, conditions },
       { new: true, runValidators: true }
     );
     if (!updatedPatient) {
